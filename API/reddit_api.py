@@ -24,9 +24,9 @@ csv_data = [['ID', 'Title', 'Author', 'Score', 'Number of Comments', 'Text', 'To
 def get_comments(comments, passed_csv, data_point=data_points):
     index = 0
     for comment in comments:
-        if not isinstance(comment, MoreComments) and not comment.is_submitter and not comment.author == '':
+        if not isinstance(comment, MoreComments) and not comment.is_submitter and not comment.author.__eq__(''):
             passed_csv.append([comment.id, comment.parent_id, comment.author, comment.score, comment.replies.__len__(),
-                           comment.body, 'COMMENT'])
+                               comment.body, 'COMMENT'])
             index += 1
             data_point += 1
             print(str(data_point) + ' C')
@@ -55,7 +55,7 @@ with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
 df = pd.read_csv(csv_file_path)
 
 df_no_duplicates = df.drop_duplicates(subset='ID')
-df_no_duplicates = df.dropna(subset=['Topic'])
+df_no_duplicates = df_no_duplicates.dropna(subset=['Topic'])
 df_no_duplicates.to_csv(csv_file_path, index=False, encoding='utf-8')
 
 print(f"Search results for '{broad_search_terms}' saved to {csv_file_path}")

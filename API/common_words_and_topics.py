@@ -39,7 +39,7 @@ min_impact = min_comments + min_scores
 
 def min_max_approx(value, minim, maxim):
     value = (value - minim) / (maxim - minim)
-    return round(max(1, value * 50))
+    return round(max(1, value * 1000))
 
 
 
@@ -54,13 +54,17 @@ def add_nodes_and_edges_to_graph(graph):
         if row['Topic'].__eq__('COMMENT'):
             destination = row['Title']
             destination = destination[3:]
-            graph.add_node(row['ID'], size=min_max_approx((row['Score'] + row['Number of Comments']), max_impact,
-                                                          min_impact))
-            graph.add_node(destination, size=min_max_approx((row['Score'] + row['Number of Comments']), max_impact,
-                                                            min_impact))
-            graph.add_edge(row['ID'], destination)
+            goes_to = df[df['ID'] == destination]
+            if not goes_to.empty:
+                destination_row = goes_to.iloc[0]
+                destination = destination_row['Author']
+                graph.add_node(row['Author'], size=min_max_approx((row['Score'] + row['Number of Comments']), max_impact,
+                                                              min_impact))
+                graph.add_node(destination, size=min_max_approx((row['Score'] + row['Number of Comments']), max_impact,
+                                                                min_impact))
+                graph.add_edge(row['Author'], destination)
         else:
-            graph.add_node(row['ID'], size=min_max_approx((row['Score'] + row['Number of Comments']), max_impact,
+            graph.add_node(row['Author'], size=min_max_approx((row['Score'] + row['Number of Comments']), max_impact,
                                                           min_impact))
 
 
@@ -101,7 +105,7 @@ node_sizes = [G.nodes[node]['size'] for node in G.nodes]
 
 # Display the word cloud using matplotlib
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-nx.draw_networkx(G, with_labels=True, node_size=node_sizes, font_size=3, ax=ax1, pos=pos)
+nx.draw_networkx(G, with_labels=True, node_size=node_sizes, font_size=10, ax=ax1, pos=pos)
 ax1.set_title('Social Network Structure')
 
 ax2.imshow(wordcloud, interpolation='bilinear')
