@@ -5,12 +5,15 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
-# Download the VADER lexicon used by SentimentIntensityAnalyzer
-# nltk.download('vader_lexicon')
+nltk.download('vader_lexicon')
+nltk.download('punkt')
+nltk.download('wordnet')
+
+
 sid = SentimentIntensityAnalyzer()
 csv_file_path = 'reddit_geoengineering_posts.csv'
 
-df = pd.read_csv(csv_file_path, usecols=['ID', 'Title', 'Text'])
+df = pd.read_csv(csv_file_path, usecols=['ID', 'Title', 'Text', 'Topic'])
 
 
 def detect_negative_opinions(text):
@@ -48,10 +51,39 @@ def getSentimentScores(binary: bool, dataframe: pd.DataFrame):
     return sentiments
 
 
-df_cc = df[df['']]
+def list_to_upper(lst):
+    return [term.upper() for term in lst]
 
-print(getSentimentScores(True, df))
 
+carbon_capture_terms = ['direct air capture', 'co2 removal', 'carbon capture', 'carbon capture and storage']
+
+carbon_capture_terms = list_to_upper(carbon_capture_terms)
+
+
+def filter_dataframe(dataframe, filter_list):
+    returned_df = pd.DataFrame(columns=dataframe.columns)
+    print(returned_df)
+    accept_comments = False
+    for index, row in dataframe.iterrows():
+        if str(row['Topic']) in filter_list:
+            returned_df = pd.concat([returned_df, pd.DataFrame([row])], ignore_index=True)
+            accept_comments = True
+        elif row['Topic'].__eq__('COMMENT') and accept_comments:
+            returned_df = pd.concat([returned_df, pd.DataFrame([row])], ignore_index=True)
+        else:
+            accept_comments = False
+    return returned_df
+
+
+df_cc = filter_dataframe(df, carbon_capture_terms)
+srm_terms = ['solar radiation management', 'stratospheric aerosol injection']
+general_terms = ['geoengineering', 'geo-engineering']
+srm_terms = list_to_upper(srm_terms)
+df_srm = filter_dataframe(df, srm_terms)
+
+df_general = filter_dataframe(df, list_to_upper(general_terms))
+
+print(df_cc)
 sentiment_scores = getSentimentScores(False, df)
 
 # Remove neutral opinions (0)

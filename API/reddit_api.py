@@ -2,17 +2,18 @@ import praw
 from praw.models import MoreComments
 import csv
 import pandas as pd
+import sentiment_analysis
+
 
 data_points = 0
 
-user_info = open('userInfo.txt', 'r')
-lines = user_info.readlines()
 
 client_id = 'YYr-1yy7SSBNFKDfRBLvnA'
 client_secret = '-i0blTrr4eoGSi_H8GfGAbb-AiaFPQ'
 user_agent = 'rusuMercedesBenz'
 
-user_info.close()
+
+
 
 broad_search_terms = ['geoengineering', 'geo-engineering', 'solar radiation management', 'carbon capture',
                       'carbon capture and storage', 'stratospheric aerosol injection',
@@ -24,7 +25,9 @@ csv_data = [['ID', 'Title', 'Author', 'Score', 'Number of Comments', 'Text', 'To
 def get_comments(comments, passed_csv, data_point=data_points):
     index = 0
     for comment in comments:
-        if not isinstance(comment, MoreComments) and not comment.is_submitter and not comment.author.__eq__(''):
+        if not isinstance(comment, MoreComments) and not comment.is_submitter and not comment.author.__eq__('') \
+                and sentiment_analysis.detect_negative_opinions(comment.body) != 0:
+            print(sentiment_analysis.detect_negative_opinions(comment.body))
             passed_csv.append([comment.id, comment.parent_id, comment.author, comment.score, comment.replies.__len__(),
                                comment.body, 'COMMENT'])
             index += 1

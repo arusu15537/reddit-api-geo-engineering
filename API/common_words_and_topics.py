@@ -10,6 +10,8 @@ from collections import Counter
 from gensim import corpora, models
 from nltk.stem import WordNetLemmatizer
 
+
+
 csv_file_path = 'reddit_geoengineering_posts.csv'
 
 df = pd.read_csv(csv_file_path)
@@ -40,7 +42,6 @@ min_impact = min_comments + min_scores
 def min_max_approx(value, minim, maxim):
     value = (value - minim) / (maxim - minim)
     return round(max(1, value * 1000))
-
 
 
 def preprocess_text(text):
