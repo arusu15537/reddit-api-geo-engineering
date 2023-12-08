@@ -55,9 +55,8 @@ def list_to_upper(lst):
     return [term.upper() for term in lst]
 
 
-carbon_capture_terms = ['direct air capture', 'co2 removal', 'carbon capture', 'carbon capture and storage']
+carbon_capture_terms = list_to_upper(['direct air capture', 'co2 removal', 'carbon capture', 'carbon capture and storage'])
 
-carbon_capture_terms = list_to_upper(carbon_capture_terms)
 
 
 def filter_dataframe(dataframe, filter_list):
@@ -76,12 +75,13 @@ def filter_dataframe(dataframe, filter_list):
 
 
 df_cc = filter_dataframe(df, carbon_capture_terms)
-srm_terms = ['solar radiation management', 'stratospheric aerosol injection']
+srm_terms = ['solar radiation management', 'stratospheric aerosol injection', 'aerosol injection']
 general_terms = ['geoengineering', 'geo-engineering']
 srm_terms = list_to_upper(srm_terms)
 df_srm = filter_dataframe(df, srm_terms)
 
 df_general = filter_dataframe(df, list_to_upper(general_terms))
+
 
 print(df_cc)
 sentiment_scores = getSentimentScores(False, df)
@@ -90,24 +90,32 @@ sentiment_scores = getSentimentScores(False, df)
 sentiment_scores = [x for x in sentiment_scores if x != 0]
 
 print(sentiment_scores)
+sentiment_statistics = {}
 
-mean_sentiment = np.mean(sentiment_scores)
-median_sentiment = np.median(sentiment_scores)
-std_dev_sentiment = np.std(sentiment_scores)
-percentile_25 = np.percentile(sentiment_scores, 25)
-percentile_75 = np.percentile(sentiment_scores, 75)
+def perform_sentiment_analysis():
+    mean_sentiment = np.mean(sentiment_scores)
+    median_sentiment = np.median(sentiment_scores)
+    std_dev_sentiment = np.std(sentiment_scores)
+    percentile_25 = np.percentile(sentiment_scores, 25)
+    percentile_75 = np.percentile(sentiment_scores, 75)
+    statistics = {
+        'Mean': mean_sentiment,
+        'Median': median_sentiment,
+        'Standard Deviation': std_dev_sentiment,
+        '25th Percentile': percentile_25,
+        '75th Percentile': percentile_75
+    }
+    return statistics
+
+
+def print_sentiment_analysis():
+    for stat, value in sentiment_statistics.items():
+        print(f"{stat}: {value}")
+
 
 # Store statistics in a dictionary
-sentiment_statistics = {
-    'Mean': mean_sentiment,
-    'Median': median_sentiment,
-    'Standard Deviation': std_dev_sentiment,
-    '25th Percentile': percentile_25,
-    '75th Percentile': percentile_75
-}
 
-for stat, value in sentiment_statistics.items():
-    print(f"{stat}: {value}")
+
 
 bin_edges = [i / 100 for i in range(-100, 101, 5)]
 cmap = LinearSegmentedColormap.from_list(
@@ -139,9 +147,3 @@ plt.xticks(np.arange(-1, 1.05, 0.05))
 
 plt.show()
 
-# Example usage:
-reddit_comment = \
-    "I hate this."
-is_negative = detect_negative_opinions_binary(reddit_comment)
-
-print(is_negative)

@@ -4,20 +4,15 @@ import csv
 import pandas as pd
 import sentiment_analysis
 
-
 data_points = 0
-
 
 client_id = 'YYr-1yy7SSBNFKDfRBLvnA'
 client_secret = '-i0blTrr4eoGSi_H8GfGAbb-AiaFPQ'
 user_agent = 'rusuMercedesBenz'
 
-
-
-
 broad_search_terms = ['geoengineering', 'geo-engineering', 'solar radiation management', 'carbon capture',
                       'carbon capture and storage', 'stratospheric aerosol injection',
-                      'direct air capture', 'co2 removal']
+                      'direct air capture', 'co2 removal', 'aerosol injection']
 reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
 csv_data = [['ID', 'Title', 'Author', 'Score', 'Number of Comments', 'Text', 'Topic']]
 
