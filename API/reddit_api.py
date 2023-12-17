@@ -6,9 +6,9 @@ import sentiment_analysis
 
 data_points = 0
 
-client_id = 'YYr-1yy7SSBNFKDfRBLvnA'
-client_secret = '-i0blTrr4eoGSi_H8GfGAbb-AiaFPQ'
-user_agent = 'rusuMercedesBenz'
+client_id = 'enter client key'
+client_secret = 'enter client secret'
+user_agent = 'enter your username'
 
 broad_search_terms = ['geoengineering', 'geo-engineering', 'solar radiation management', 'carbon capture',
                       'carbon capture and storage', 'stratospheric aerosol injection',
